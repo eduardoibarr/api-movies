@@ -1,81 +1,99 @@
 import axios from "axios";
 import { environment } from "../config/environment";
 import { Logger } from "../config/logger";
+import { Movie, MovieParams } from "../../domain/models/movie";
+import { Pagination } from "../../domain/models/pagination";
 
 export class MoviesService {
   constructor(private readonly logger: Logger) {}
 
-  private mountHeaders() {
+  private mountHeaders(): Record<string, string> {
     return {
       Authorization: `Bearer ${environment.MOVIES_API_TOKEN}`,
     };
   }
 
-  async getPopularMovies() {
-    const response = await axios.get(
-      `${environment.MOVIES_API_URL}/movie/popular`,
-      {
-        headers: this.mountHeaders(),
-      }
-    );
-
-    if (response.status !== 200) {
-      this.logger
-        .getLogger()
-        .error(`Error on get popular movies: ${response.data}`);
+  private buildUrl(endpoint: string, params?: MovieParams): string {
+    const url = new URL(`${environment.MOVIES_API_URL}/${endpoint}`);
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value) {
+          url.searchParams.append(key, value.toString());
+        }
+      });
     }
-
-    return response.data;
+    return url.toString();
   }
 
-  async getTopRatedMovies() {
-    const response = await axios.get(
-      `${environment.MOVIES_API_URL}/movie/top_rated`,
-      {
-        headers: this.mountHeaders(),
-      }
-    );
-
-    if (response.status !== 200) {
-      this.logger
-        .getLogger()
-        .error(`Error on get top rated movies: ${response.data}`);
+  async getPopularMovies(params?: MovieParams): Promise<Pagination<Movie[]>> {
+    try {
+      const response = await axios.get<Pagination<Movie[]>>(
+        this.buildUrl("movie/popular", {
+          ...params,
+          language: "pt-BR",
+        }),
+        {
+          headers: this.mountHeaders(),
+        }
+      );
+      return response.data;
+    } catch (error) {
+      this.logger.getLogger().error(`Error on get popular movies: ${error}`);
+      throw error;
     }
-
-    return response.data;
   }
 
-  async getUpcomingMovies() {
-    const response = await axios.get(
-      `${environment.MOVIES_API_URL}/movie/upcoming`,
-      {
-        headers: this.mountHeaders(),
-      }
-    );
-
-    if (response.status !== 200) {
-      this.logger
-        .getLogger()
-        .error(`Error on get upcoming movies: ${response.data}`);
+  async getTopRatedMovies(params?: MovieParams): Promise<Pagination<Movie[]>> {
+    try {
+      const response = await axios.get<Pagination<Movie[]>>(
+        this.buildUrl("movie/top_rated", {
+          ...params,
+          language: "pt-BR",
+        }),
+        {
+          headers: this.mountHeaders(),
+        }
+      );
+      return response.data;
+    } catch (error) {
+      this.logger.getLogger().error(`Error on get top-rated movies: ${error}`);
+      throw error;
     }
-
-    return response.data;
   }
 
-  async getMovieById(id: string) {
-    const response = await axios.get(
-      `${environment.MOVIES_API_URL}/movie/${id}`,
-      {
-        headers: this.mountHeaders(),
-      }
-    );
-
-    if (response.status !== 200) {
-      this.logger
-        .getLogger()
-        .error(`Error on get movie by id: ${response.data}`);
+  async getUpcomingMovies(params?: MovieParams): Promise<Pagination<Movie[]>> {
+    try {
+      const response = await axios.get<Pagination<Movie[]>>(
+        this.buildUrl("movie/upcoming", {
+          ...params,
+          language: "pt-BR",
+        }),
+        {
+          headers: this.mountHeaders(),
+        }
+      );
+      return response.data;
+    } catch (error) {
+      this.logger.getLogger().error(`Error on get upcoming movies: ${error}`);
+      throw error;
     }
+  }
 
-    return response.data;
+  async getMovieById(id: string): Promise<Pagination<Movie[]>> {
+    try {
+      const response = await axios.get<Pagination<Movie[]>>(
+        `${environment.MOVIES_API_URL}/movie/${id}`,
+        {
+          headers: this.mountHeaders(),
+          params: {
+            language: "pt-BR",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      this.logger.getLogger().error(`Error on get movie by id: ${error}`);
+      throw error;
+    }
   }
 }

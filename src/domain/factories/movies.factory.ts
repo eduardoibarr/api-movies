@@ -3,6 +3,7 @@ import { MoviesService } from "../../application/services/movies.service";
 import { GetMovieByIdUseCase } from "../../application/use-cases/movies/get-movie-by-id.usecase";
 import { GetPopularMoviesUseCase } from "../../application/use-cases/movies/get-popular-movies.usecase";
 import { GetTopRatedMoviesUseCase } from "../../application/use-cases/movies/get-top-rated-movies.usecase";
+import { SearchMovieUseCase } from "../../application/use-cases/movies/search-movie.usecase";
 import { MoviesController } from "../../infra/http/controllers/movies.controller";
 
 export class MoviesFactory {
@@ -28,5 +29,11 @@ export class MoviesFactory {
     const logger = new Logger();
     const moviesFactory = new MoviesFactory();
     return new MoviesController(moviesFactory, logger);
+  }
+
+  async makeSearchMovieUseCase(): Promise<SearchMovieUseCase> {
+    const logger = new Logger();
+    const moviesService = new MoviesService(logger);
+    return new SearchMovieUseCase(moviesService);
   }
 }

@@ -76,4 +76,28 @@ export class MoviesController {
         .json({ message: "Internal server error", statusCode: 500 });
     }
   }
+
+  async searchMovie(req: Request, res: Response): Promise<Response> {
+    try {
+      const { query } = req.query;
+      const searchMovieUseCase =
+        await this.moviesFactory.makeSearchMovieUseCase();
+      const movie = await searchMovieUseCase.execute({
+        query: query as string,
+      });
+
+      if (!movie.results) {
+        return res
+          .status(404)
+          .json({ message: "Movie not found", statusCode: 404 });
+      }
+
+      return res.status(200).json({ ...movie });
+    } catch (error) {
+      this.logger.getLogger().error(`Error searching movie: ${error}`);
+      return res
+        .status(500)
+        .json({ message: "Internal server error", statusCode: 500 });
+    }
+  }
 }

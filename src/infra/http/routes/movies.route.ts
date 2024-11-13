@@ -17,6 +17,12 @@ moviesRouter.get("/top-rated", (req, res) => {
   });
 });
 
+moviesRouter.get("/search", (req, res) => {
+  moviesFactory.makeMoviesController().then((moviesController) => {
+    moviesController.searchMovie(req, res);
+  });
+});
+
 moviesRouter.get("/:id", (req, res) => {
   moviesFactory.makeMoviesController().then((moviesController) => {
     moviesController.getMovieById(req, res);

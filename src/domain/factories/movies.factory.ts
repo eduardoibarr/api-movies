@@ -27,8 +27,18 @@ export class MoviesFactory {
 
   async makeMoviesController(): Promise<MoviesController> {
     const logger = new Logger();
-    const moviesFactory = new MoviesFactory();
-    return new MoviesController(moviesFactory, logger);
+    const getMovieByIdUseCase = await this.makeGeyMovieByIdUseCase();
+    const getPopularMoviesUseCase = await this.makeGetPopularMoviesUseCase();
+    const getTopRatedMoviesUseCase = await this.makeGetTopRatedMoviesUseCase();
+    const searchMovieUseCase = await this.makeSearchMovieUseCase();
+
+    return new MoviesController(
+      getMovieByIdUseCase,
+      getPopularMoviesUseCase,
+      getTopRatedMoviesUseCase,
+      searchMovieUseCase,
+      logger
+    );
   }
 
   async makeSearchMovieUseCase(): Promise<SearchMovieUseCase> {

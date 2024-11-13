@@ -1,19 +1,21 @@
 import { Request, Response } from "express";
 import { Logger } from "../../../application/config/logger";
-import { SeriesFactory } from "../../../domain/factories/series.factory";
+import { GetPopularSeriesUseCase } from "../../../application/use-cases/series/get-popular-series.usecase";
+import { GetSerieByIdUseCase } from "../../../application/use-cases/series/get-serie-by-id.usecase";
+import { SearchSerieUseCase } from "../../../application/use-cases/series/search-serie.usecase";
 
 export class SeriesController {
   constructor(
-    private seriesFactory: SeriesFactory,
+    private getSerieByIdUseCase: GetSerieByIdUseCase,
+    private getPopularSeriesUseCase: GetPopularSeriesUseCase,
+    private searchSerieUseCase: SearchSerieUseCase,
     private logger: Logger
   ) {}
 
   async getSerieById(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
-      const getSerieByIdUseCase =
-        await this.seriesFactory.makeGeySerieByIdUseCase();
-      const serie = await getSerieByIdUseCase.execute(id);
+      const serie = await this.getSerieByIdUseCase.execute(id);
 
       if (!serie) {
         return res
@@ -33,9 +35,7 @@ export class SeriesController {
   async getPopularSeries(req: Request, res: Response): Promise<Response> {
     try {
       const { page, query, genre, limit } = req.query;
-      const getPopularSeriesUseCase =
-        await this.seriesFactory.makeGetPopularSeriesUseCase();
-      const series = await getPopularSeriesUseCase.execute({
+      const series = await this.getPopularSeriesUseCase.execute({
         page: Number(page),
         query: query as string,
         genre: genre as string,
@@ -63,9 +63,7 @@ export class SeriesController {
   async searchSerie(req: Request, res: Response): Promise<Response> {
     try {
       const { query } = req.query;
-      const searchSerieUseCase =
-        await this.seriesFactory.makeSearchSerieUseCase();
-      const serie = await searchSerieUseCase.execute({
+      const serie = await this.searchSerieUseCase.execute({
         query: query as string,
       });
 

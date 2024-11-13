@@ -10,6 +10,7 @@ import { Logger } from "./application/config/logger";
 import { limiter } from "./infra/http/middlewares/rate-limit";
 import { corsConfig } from "./infra/http/middlewares/cors";
 import { seriesRouter } from "./infra/http/routes/series.route";
+import { genresRouter } from "./infra/http/routes/genres.route";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(logRoutes.handle.bind(logRoutes));
 
 app.use("/movies", moviesRouter);
 app.use("/series", seriesRouter);
+app.use("/genres", genresRouter);
 
 app.listen(environment.PORT, () => {
   logger.info(`Server is running on port ${environment.PORT}`);

@@ -1,19 +1,23 @@
 import { Request, Response } from "express";
-import { MoviesFactory } from "../../../domain/factories/movies.factory";
 import { Logger } from "../../../application/config/logger";
+import { GetMovieByIdUseCase } from "../../../application/use-cases/movies/get-movie-by-id.usecase";
+import { GetPopularMoviesUseCase } from "../../../application/use-cases/movies/get-popular-movies.usecase";
+import { GetTopRatedMoviesUseCase } from "../../../application/use-cases/movies/get-top-rated-movies.usecase";
+import { SearchMovieUseCase } from "../../../application/use-cases/movies/search-movie.usecase";
 
 export class MoviesController {
   constructor(
-    private moviesFactory: MoviesFactory,
+    private getMovieByIdUseCase: GetMovieByIdUseCase,
+    private getPopularMoviesUseCase: GetPopularMoviesUseCase,
+    private getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase,
+    private searchMovieUseCase: SearchMovieUseCase,
     private logger: Logger
   ) {}
 
   async getMovieById(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
-      const getMovieByIdUseCase =
-        await this.moviesFactory.makeGeyMovieByIdUseCase();
-      const movie = await getMovieByIdUseCase.execute(id);
+      const movie = await this.getMovieByIdUseCase.execute(id);
 
       if (!movie) {
         return res
@@ -33,9 +37,7 @@ export class MoviesController {
   async getPopularMovies(req: Request, res: Response): Promise<Response> {
     try {
       const { page, query, genre, limit } = req.query;
-      const getPopularMoviesUseCase =
-        await this.moviesFactory.makeGetPopularMoviesUseCase();
-      const movies = await getPopularMoviesUseCase.execute({
+      const movies = await this.getPopularMoviesUseCase.execute({
         page: Number(page),
         query: query as string,
         genre: genre as string,
@@ -62,9 +64,7 @@ export class MoviesController {
 
   async getTopRatedMovies(_: Request, res: Response): Promise<Response> {
     try {
-      const getTopRatedMoviesUseCase =
-        await this.moviesFactory.makeGetTopRatedMoviesUseCase();
-      const movies = await getTopRatedMoviesUseCase.execute();
+      const movies = await this.getTopRatedMoviesUseCase.execute();
 
       return res.status(200).json(movies);
     } catch (error) {
@@ -80,9 +80,7 @@ export class MoviesController {
   async searchMovie(req: Request, res: Response): Promise<Response> {
     try {
       const { query } = req.query;
-      const searchMovieUseCase =
-        await this.moviesFactory.makeSearchMovieUseCase();
-      const movie = await searchMovieUseCase.execute({
+      const movie = await this.searchMovieUseCase.execute({
         query: query as string,
       });
 

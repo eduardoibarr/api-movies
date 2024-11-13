@@ -20,8 +20,16 @@ export class SeriesFactory {
 
   async makeSeriesController(): Promise<SeriesController> {
     const logger = new Logger();
-    const seriesFactory = new SeriesFactory();
-    return new SeriesController(seriesFactory, logger);
+    const getSerieByIdUseCase = await this.makeGeySerieByIdUseCase();
+    const getPopularSeriesUseCase = await this.makeGetPopularSeriesUseCase();
+    const searchSerieUseCase = await this.makeSearchSerieUseCase();
+
+    return new SeriesController(
+      getSerieByIdUseCase,
+      getPopularSeriesUseCase,
+      searchSerieUseCase,
+      logger
+    );
   }
 
   async makeSearchSerieUseCase(): Promise<SearchSerieUseCase> {

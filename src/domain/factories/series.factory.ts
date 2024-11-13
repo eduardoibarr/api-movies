@@ -6,20 +6,18 @@ import { SearchSerieUseCase } from "../../application/use-cases/series/search-se
 import { SeriesController } from "../../infra/http/controllers/series.controller";
 
 export class SeriesFactory {
-  async makeGeySerieByIdUseCase(): Promise<GetSerieByIdUseCase> {
-    const logger = new Logger();
-    const seriesService = new SeriesService(logger);
-    return new GetSerieByIdUseCase(seriesService);
+  private static logger = new Logger();
+  private static seriesService = new SeriesService(this.logger);
+
+  static async makeGeySerieByIdUseCase(): Promise<GetSerieByIdUseCase> {
+    return new GetSerieByIdUseCase(this.seriesService);
   }
 
-  async makeGetPopularSeriesUseCase(): Promise<GetPopularSeriesUseCase> {
-    const logger = new Logger();
-    const seriesService = new SeriesService(logger);
-    return new GetPopularSeriesUseCase(seriesService);
+  static async makeGetPopularSeriesUseCase(): Promise<GetPopularSeriesUseCase> {
+    return new GetPopularSeriesUseCase(this.seriesService);
   }
 
-  async makeSeriesController(): Promise<SeriesController> {
-    const logger = new Logger();
+  static async makeSeriesController(): Promise<SeriesController> {
     const getSerieByIdUseCase = await this.makeGeySerieByIdUseCase();
     const getPopularSeriesUseCase = await this.makeGetPopularSeriesUseCase();
     const searchSerieUseCase = await this.makeSearchSerieUseCase();
@@ -28,13 +26,11 @@ export class SeriesFactory {
       getSerieByIdUseCase,
       getPopularSeriesUseCase,
       searchSerieUseCase,
-      logger
+      this.logger
     );
   }
 
-  async makeSearchSerieUseCase(): Promise<SearchSerieUseCase> {
-    const logger = new Logger();
-    const seriesService = new SeriesService(logger);
-    return new SearchSerieUseCase(seriesService);
+  static async makeSearchSerieUseCase(): Promise<SearchSerieUseCase> {
+    return new SearchSerieUseCase(this.seriesService);
   }
 }

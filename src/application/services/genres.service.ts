@@ -1,3 +1,4 @@
+import axios from "axios";
 import { GenreResponse } from "../../domain/models/genre";
 import { MovieParams } from "../../domain/models/movie";
 import { environment } from "../config/environment";
@@ -30,6 +31,7 @@ export class GenresService {
         this.buildUrl("genre/movie/list"),
         {
           headers: this.mountHeaders(),
+          params: { language: "pt-BR" },
         }
       );
 
@@ -46,6 +48,7 @@ export class GenresService {
         this.buildUrl("genre/tv/list"),
         {
           headers: this.mountHeaders(),
+          params: { language: "pt-BR" },
         }
       );
 

@@ -7,26 +7,22 @@ import { SearchMovieUseCase } from "../../application/use-cases/movies/search-mo
 import { MoviesController } from "../../infra/http/controllers/movies.controller";
 
 export class MoviesFactory {
-  async makeGeyMovieByIdUseCase(): Promise<GetMovieByIdUseCase> {
-    const logger = new Logger();
-    const moviesService = new MoviesService(logger);
-    return new GetMovieByIdUseCase(moviesService);
+  private static logger = new Logger();
+  private static moviesService = new MoviesService(this.logger);
+
+  static async makeGeyMovieByIdUseCase(): Promise<GetMovieByIdUseCase> {
+    return new GetMovieByIdUseCase(this.moviesService);
   }
 
-  async makeGetPopularMoviesUseCase(): Promise<GetPopularMoviesUseCase> {
-    const logger = new Logger();
-    const moviesService = new MoviesService(logger);
-    return new GetPopularMoviesUseCase(moviesService);
+  static async makeGetPopularMoviesUseCase(): Promise<GetPopularMoviesUseCase> {
+    return new GetPopularMoviesUseCase(this.moviesService);
   }
 
-  async makeGetTopRatedMoviesUseCase(): Promise<GetTopRatedMoviesUseCase> {
-    const logger = new Logger();
-    const moviesService = new MoviesService(logger);
-    return new GetTopRatedMoviesUseCase(moviesService);
+  static async makeGetTopRatedMoviesUseCase(): Promise<GetTopRatedMoviesUseCase> {
+    return new GetTopRatedMoviesUseCase(this.moviesService);
   }
 
-  async makeMoviesController(): Promise<MoviesController> {
-    const logger = new Logger();
+  static async makeMoviesController(): Promise<MoviesController> {
     const getMovieByIdUseCase = await this.makeGeyMovieByIdUseCase();
     const getPopularMoviesUseCase = await this.makeGetPopularMoviesUseCase();
     const getTopRatedMoviesUseCase = await this.makeGetTopRatedMoviesUseCase();
@@ -37,13 +33,11 @@ export class MoviesFactory {
       getPopularMoviesUseCase,
       getTopRatedMoviesUseCase,
       searchMovieUseCase,
-      logger
+      this.logger
     );
   }
 
-  async makeSearchMovieUseCase(): Promise<SearchMovieUseCase> {
-    const logger = new Logger();
-    const moviesService = new MoviesService(logger);
-    return new SearchMovieUseCase(moviesService);
+  static async makeSearchMovieUseCase(): Promise<SearchMovieUseCase> {
+    return new SearchMovieUseCase(this.moviesService);
   }
 }

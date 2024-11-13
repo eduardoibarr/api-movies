@@ -5,19 +5,18 @@ import { GetSeriesGenresUseCase } from "../../application/use-cases/genres/get-s
 import { GenresController } from "../../infra/http/controllers/genres.controller";
 
 export class GenresFactory {
-  async makeGetMoviesGenresUseCase(): Promise<GetMoviesGenresUseCase> {
-    const logger = new Logger();
-    const genresService = new GenresService(logger);
-    return new GetMoviesGenresUseCase(genresService);
+  private static logger = new Logger();
+  private static genresService = new GenresService(this.logger);
+
+  static async makeGetMoviesGenresUseCase(): Promise<GetMoviesGenresUseCase> {
+    return new GetMoviesGenresUseCase(this.genresService);
   }
 
-  async makeGetSeriesGenresUseCase(): Promise<GetSeriesGenresUseCase> {
-    const logger = new Logger();
-    const genresService = new GenresService(logger);
-    return new GetSeriesGenresUseCase(genresService);
+  static async makeGetSeriesGenresUseCase(): Promise<GetSeriesGenresUseCase> {
+    return new GetSeriesGenresUseCase(this.genresService);
   }
 
-  async makeGenresController(): Promise<GenresController> {
+  static async makeGenresController(): Promise<GenresController> {
     const getMoviesGenresUseCase = await this.makeGetMoviesGenresUseCase();
     const getSeriesGenresUseCase = await this.makeGetSeriesGenresUseCase();
 

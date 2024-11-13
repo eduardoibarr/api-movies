@@ -28,17 +28,15 @@ app.use(helmet());
 
 app.use(logRoutes.handle.bind(logRoutes));
 
-app.use(basicAuth);
-
 app.get("/health-check", (_, res) => {
-  res
-    .status(200)
-    .json({
-      status: "ok",
-      message: "Server is running",
-      timestamp: new Date(),
-    });
+  res.status(200).json({
+    status: "ok",
+    message: "Server is running",
+    timestamp: new Date(),
+  });
 });
+
+app.use(basicAuth);
 
 app.use("/movies", moviesRouter);
 app.use("/series", seriesRouter);

@@ -1,12 +1,9 @@
 import axios from "axios";
 import { environment } from "../config/environment";
 import { Logger } from "../config/logger";
-import {
-  Movie,
-  MovieParams,
-  SearchMovieParams,
-} from "../../domain/models/movie";
+import { Movie, MovieParams } from "../../domain/models/movie";
 import { Pagination } from "../../domain/models/pagination";
+import { SearchParams } from "../../domain/models/params";
 
 export class MoviesService {
   constructor(private readonly logger: Logger) {}
@@ -101,7 +98,7 @@ export class MoviesService {
     }
   }
 
-  async searchMovie(params: SearchMovieParams): Promise<Pagination<Movie[]>> {
+  async searchMovie(params: SearchParams): Promise<Pagination<Movie[]>> {
     try {
       const response = await axios.get<Pagination<Movie[]>>(
         this.buildUrl("search/movie", params),
@@ -115,7 +112,7 @@ export class MoviesService {
 
       return response.data;
     } catch (error) {
-      this.logger.getLogger().error(`Error on search movies: ${error}`);
+      this.logger.getLogger().error(`Error on search movie: ${error}`);
       throw error;
     }
   }

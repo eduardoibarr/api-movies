@@ -3,6 +3,7 @@ import { environment } from "../config/environment";
 import { Logger } from "../config/logger";
 import { Pagination } from "../../domain/models/pagination";
 import { Serie, SerieParams } from "../../domain/models/serie";
+import { SearchParams } from "../../domain/models/params";
 
 export class SeriesService {
   constructor(private readonly logger: Logger) {}
@@ -57,6 +58,25 @@ export class SeriesService {
       return response.data;
     } catch (error) {
       this.logger.getLogger().error(`Error on get serie by id: ${error}`);
+      throw error;
+    }
+  }
+
+  async searchSerie(params: SearchParams): Promise<Pagination<Serie[]>> {
+    try {
+      const response = await axios.get<Pagination<Serie[]>>(
+        this.buildUrl("search/tv", params),
+        {
+          headers: this.mountHeaders(),
+          params: {
+            language: "pt-BR",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      this.logger.getLogger().error(`Error on search serie: ${error}`);
       throw error;
     }
   }

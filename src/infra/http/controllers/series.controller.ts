@@ -59,4 +59,28 @@ export class SeriesController {
         .json({ message: "Internal server error", statusCode: 500 });
     }
   }
+
+  async searchSerie(req: Request, res: Response): Promise<Response> {
+    try {
+      const { query } = req.query;
+      const searchSerieUseCase =
+        await this.seriesFactory.makeSearchSerieUseCase();
+      const serie = await searchSerieUseCase.execute({
+        query: query as string,
+      });
+
+      if (!serie.results) {
+        return res
+          .status(404)
+          .json({ message: "Serie not found", statusCode: 404 });
+      }
+
+      return res.status(200).json({ ...serie });
+    } catch (error) {
+      this.logger.getLogger().error(`Error searching serie: ${error}`);
+      return res
+        .status(500)
+        .json({ message: "Internal server error", statusCode: 500 });
+    }
+  }
 }

@@ -2,7 +2,6 @@ import { Router } from "express";
 import { MoviesFactory } from "../../../domain/factories/movies.factory";
 
 const moviesRouter = Router();
-
 const moviesFactory = new MoviesFactory();
 
 moviesRouter.get("/popular", (req, res) => {

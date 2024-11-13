@@ -14,6 +14,7 @@ import { moviesRouter } from "./infra/http/routes/movies.route";
 import { seriesRouter } from "./infra/http/routes/series.route";
 import { genresRouter } from "./infra/http/routes/genres.route";
 import { discoverRouter } from "./infra/http/routes/discover.route";
+import { basicAuth } from "./infra/http/middlewares/auth";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(helmet());
 
 app.use(logRoutes.handle.bind(logRoutes));
 
+app.use(basicAuth);
 app.use("/movies", moviesRouter);
 app.use("/series", seriesRouter);
 app.use("/genres", genresRouter);

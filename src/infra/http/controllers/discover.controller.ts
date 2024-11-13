@@ -16,6 +16,7 @@ export class DiscoverController {
       region,
       sort_by,
       page,
+      limit,
     } = req.query;
 
     const movies = await this.discoverMoviesUseCase.execute({
@@ -33,6 +34,10 @@ export class DiscoverController {
         .json({ message: "Movies not found", statusCode: 404 });
     }
 
+    movies.results = limit
+      ? movies.results.slice(0, Number(limit))
+      : movies.results.slice(0, 8);
+
     return res.status(200).json({ ...movies });
   }
 
@@ -45,6 +50,7 @@ export class DiscoverController {
       with_original_language,
       sort_by,
       page,
+      limit,
     } = req.query;
 
     const series = await this.discoverSeriesUseCase.execute({
@@ -62,6 +68,10 @@ export class DiscoverController {
         .status(404)
         .json({ message: "Series not found", statusCode: 404 });
     }
+
+    series.results = limit
+      ? series.results.slice(0, Number(limit))
+      : series.results.slice(0, 8);
 
     return res.status(200).json({ ...series });
   }
